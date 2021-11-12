@@ -6,6 +6,11 @@ function App() {
   const [modal, setModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
 
+  const handleModalClose = () => {
+    setModal(false);
+    setIsEdit(false);
+  }
+
   return (
     <div className=''>
       <header className='h-16 w-full bg-indigo-200 px-6 flex justify-between items-center'>
@@ -47,7 +52,7 @@ function App() {
           </li>
         </ul>
       </section>
-      <Modal isOpen={modal} isEdit={isEdit} setModal={setModal} />
+      <Modal isOpen={modal} isEdit={isEdit} closeModal={handleModalClose} />
     </div>
   );
 }

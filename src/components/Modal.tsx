@@ -4,10 +4,10 @@ import CloseIcon from '../assets/svg/CloseIcon';
 export interface IModal {
   isOpen: boolean;
   isEdit: boolean;
-  setModal: (state: boolean) => void;
+  closeModal: () => void;
 }
 
-const Modal: FC<IModal> = ({ isOpen, isEdit, setModal }) => {
+const Modal: FC<IModal> = ({ isOpen, isEdit, closeModal }) => {
   const [value, setValue] = useState({
     name: '',
     location: '',
@@ -22,7 +22,7 @@ const Modal: FC<IModal> = ({ isOpen, isEdit, setModal }) => {
   const handleModal = (e: MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
     if (target.classList.contains('open-nav')) {
-      setModal(false);
+      closeModal();
     }
   };
 
@@ -41,16 +41,16 @@ const Modal: FC<IModal> = ({ isOpen, isEdit, setModal }) => {
         className='flex flex-col justify-center items-center h-full w-full open-nav'
         onClick={handleModal}
       >
-        <div className='flex justify-end w-11/12 lg:w-[479px] 2xl:w-6/12'>
+        <div className='flex justify-end w-11/12 lg:w-1/2 2xl:w-6/12'>
           <div
             role='button'
             className='cursor-pointer w-6 h-6 rounded-full flex items-center justify-center bg-white'
-            onClick={() => setModal(false)}
+            onClick={() => closeModal()}
           >
             <CloseIcon />
           </div>
         </div>
-        <section className='w-11/12 lg:w-[479px] 2xl:w-6/12 bg-white flex justify-center items-center mt-5 rounded-lg'>
+        <section className='w-11/12 lg:w-1/2 2xl:w-6/12 bg-white flex justify-center items-center mt-5 rounded-lg'>
           <div className='w-11/12 py-8'>
             <h2 className='capitalize text-xl text-gray-500 font-medium mb-4'>
               {isEdit ? 'Edit User' : 'add user'}
