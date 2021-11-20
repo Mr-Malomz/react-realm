@@ -24,7 +24,7 @@ function App() {
       </header>
       <section className='mt-10 flex justify-center px-6'>
         <ul className='w-full'>
-          <li className='border-2 p-6 rounded-lg flex items-center'>
+          <li className='border-2 p-6 mb-3 rounded-lg flex items-center'>
             <section className='h-10 w-10 bg-indigo-100 rounded-md flex justify-center items-center mr-4'>
               <UserIcon />
             </section>
