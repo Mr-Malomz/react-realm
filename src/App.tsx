@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { BSON } from 'realm-web';
 import UserIcon from './assets/svg/UserIcon';
 import Modal from './components/Modal';
 import { IUser } from './models/user.interface';
@@ -9,6 +10,7 @@ function App() {
   const [isEdit, setIsEdit] = useState(false);
   const [users, setUsers] = useState<IUser[]>([]);
   const [userId, setUserId] = useState<string>();
+  const [editingId, setEditingId] = useState<string>();
 
   useEffect(() => {
     async function getUsers() {
@@ -25,6 +27,14 @@ function App() {
   const handleModalClose = () => {
     setModal(false);
     setIsEdit(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    const user: Realm.User = await app.logIn(credentials);
+    const delUser = user.functions.deleteUser(new BSON.ObjectID(id).toString());
+    delUser.then((resp) => {
+      setUserId(resp.deletedCount);
+    });
   };
 
   return (
@@ -58,7 +68,10 @@ function App() {
                     {user.title}
                   </p>
                   <div className='flex'>
-                    <button className='text-sm text-red-500 capitalize px-4 py-2 mr-4 border border-red-500 rounded-md'>
+                    <button
+                      onClick={() => handleDelete(user._id!)}
+                      className='text-sm text-red-500 capitalize px-4 py-2 mr-4 border border-red-500 rounded-md'
+                    >
                       delete
                     </button>
                     <button
@@ -66,6 +79,7 @@ function App() {
                       onClick={() => {
                         setModal(true);
                         setIsEdit(true);
+                        setEditingId(user._id); 
                       }}
                     >
                       edit
@@ -80,7 +94,8 @@ function App() {
         isOpen={modal}
         isEdit={isEdit}
         closeModal={handleModalClose}
-        setUserId={setUserId} 
+        setUserId={setUserId}
+        editingId={editingId}
       />
     </div>
   );
