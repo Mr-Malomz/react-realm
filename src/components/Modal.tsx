@@ -1,13 +1,15 @@
 import { FC, MouseEvent, useState } from 'react';
 import CloseIcon from '../assets/svg/CloseIcon';
+import { app, credentials } from '../utils/mongo.client';
 
 export interface IModal {
   isOpen: boolean;
   isEdit: boolean;
   closeModal: () => void;
+  setUserId: (id: string) => void;
 }
 
-const Modal: FC<IModal> = ({ isOpen, isEdit, closeModal }) => {
+const Modal: FC<IModal> = ({ isOpen, isEdit, closeModal, setUserId }) => { 
   const [value, setValue] = useState({
     name: '',
     location: '',
@@ -26,9 +28,18 @@ const Modal: FC<IModal> = ({ isOpen, isEdit, closeModal }) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(value);
+    const user: Realm.User = await app.logIn(credentials);
+    const create = user.functions.createUser(
+      value.name,
+      value.location,
+      value.title
+    );
+    create.then((resp) => {
+      setUserId(resp.insertedId);
+      setValue({ name: '', location: '', title: '' });
+    });
   };
 
   return (

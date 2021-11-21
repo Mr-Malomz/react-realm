@@ -1,15 +1,31 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import UserIcon from './assets/svg/UserIcon';
 import Modal from './components/Modal';
+import { IUser } from './models/user.interface';
+import { app, credentials } from './utils/mongo.client';
 
 function App() {
   const [modal, setModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [users, setUsers] = useState<IUser[]>([]);
+  const [userId, setUserId] = useState<string>();
+
+  useEffect(() => {
+    async function getUsers() {
+      const user: Realm.User = await app.logIn(credentials);
+      const listOfUser: Promise<IUser[]> = user.functions.getAllUsers();
+      listOfUser.then((resp) => {
+        setUsers(resp);
+      });
+    }
+    getUsers();
+    return () => {};
+  }, [userId]);
 
   const handleModalClose = () => {
     setModal(false);
     setIsEdit(false);
-  }
+  };
 
   return (
     <div className=''>
@@ -24,35 +40,48 @@ function App() {
       </header>
       <section className='mt-10 flex justify-center px-6'>
         <ul className='w-full'>
-          <li className='border-2 p-6 mb-3 rounded-lg flex items-center'>
-            <section className='h-10 w-10 bg-indigo-100 rounded-md flex justify-center items-center mr-4'>
-              <UserIcon />
-            </section>
-            <section className=''>
-              <h2 className='capitalize font-semibold mb-1'>daniel mark</h2>
-              <p className='capitalize text-gray-500 mb-1'>new york</p>
-              <p className='capitalize text-indigo-500 font-medium text-sm mb-2'>
-                software engineer
-              </p>
-              <div className='flex'>
-                <button className='text-sm text-red-500 capitalize px-4 py-2 mr-4 border border-red-500 rounded-md'>
-                  delete
-                </button>
-                <button
-                  className='text-sm text-white capitalize px-4 py-2 bg-indigo-900 rounded-md'
-                  onClick={() => {
-                    setModal(true);
-                    setIsEdit(true);
-                  }}
-                >
-                  edit
-                </button>
-              </div>
-            </section>
-          </li>
+          {users &&
+            users.map((user) => (
+              <li
+                key={user._id}
+                className='border-2 p-6 mb-3 rounded-lg flex items-center'
+              >
+                <section className='h-10 w-10 bg-indigo-100 rounded-md flex justify-center items-center mr-4'>
+                  <UserIcon />
+                </section>
+                <section className=''>
+                  <h2 className='capitalize font-semibold mb-1'>{user.name}</h2>
+                  <p className='capitalize text-gray-500 mb-1'>
+                    {user.location}
+                  </p>
+                  <p className='capitalize text-indigo-500 font-medium text-sm mb-2'>
+                    {user.title}
+                  </p>
+                  <div className='flex'>
+                    <button className='text-sm text-red-500 capitalize px-4 py-2 mr-4 border border-red-500 rounded-md'>
+                      delete
+                    </button>
+                    <button
+                      className='text-sm text-white capitalize px-4 py-2 bg-indigo-900 rounded-md'
+                      onClick={() => {
+                        setModal(true);
+                        setIsEdit(true);
+                      }}
+                    >
+                      edit
+                    </button>
+                  </div>
+                </section>
+              </li>
+            ))}
         </ul>
       </section>
-      <Modal isOpen={modal} isEdit={isEdit} closeModal={handleModalClose} />
+      <Modal
+        isOpen={modal}
+        isEdit={isEdit}
+        closeModal={handleModalClose}
+        setUserId={setUserId} 
+      />
     </div>
   );
 }
