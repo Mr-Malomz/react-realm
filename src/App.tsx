@@ -9,7 +9,7 @@ function App() {
   const [modal, setModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [users, setUsers] = useState<IUser[]>([]);
-  const [userId, setUserId] = useState<string>();
+  const [userValue, setUserValue] = useState<any>();
   const [editingId, setEditingId] = useState<string>();
 
   useEffect(() => {
@@ -22,7 +22,7 @@ function App() {
     }
     getUsers();
     return () => {};
-  }, [userId]);
+  }, [userValue]);
 
   const handleModalClose = () => {
     setModal(false);
@@ -33,7 +33,7 @@ function App() {
     const user: Realm.User = await app.logIn(credentials);
     const delUser = user.functions.deleteUser(new BSON.ObjectID(id).toString());
     delUser.then((resp) => {
-      setUserId(resp.deletedCount);
+      setUserValue(resp.deletedCount);
     });
   };
 
@@ -94,7 +94,7 @@ function App() {
         isOpen={modal}
         isEdit={isEdit}
         closeModal={handleModalClose}
-        setUserId={setUserId}
+        setUserValue={setUserValue}
         editingId={editingId}
       />
     </div>

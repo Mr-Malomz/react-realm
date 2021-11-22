@@ -8,7 +8,7 @@ export interface IModal {
   isOpen: boolean;
   isEdit: boolean;
   closeModal: () => void;
-  setUserId: (id: string) => void;
+  setUserValue: (id: string) => void;
   editingId?: string;
 }
 
@@ -16,7 +16,7 @@ const Modal: FC<IModal> = ({
   isOpen,
   isEdit,
   closeModal,
-  setUserId,
+  setUserValue,
   editingId,
 }) => {
   const [value, setValue] = useState({
@@ -48,7 +48,7 @@ const Modal: FC<IModal> = ({
         value.title
       );
       edit.then((resp) => {
-        setUserId(resp._id!);
+        setUserValue(resp._id!);
         setValue({ name: '', location: '', title: '' });
         closeModal();
       });
@@ -59,7 +59,7 @@ const Modal: FC<IModal> = ({
         value.title
       );
       create.then((resp) => {
-        setUserId(resp.insertedId);
+        setUserValue(resp.insertedId);
         setValue({ name: '', location: '', title: '' });
       });
     }
